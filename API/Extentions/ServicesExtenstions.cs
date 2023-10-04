@@ -1,0 +1,68 @@
+﻿using API.Data;
+using API.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+namespace API.Extentions
+{
+    public static class ServicesExtenstions
+    {
+        #region ConnectionString configuration
+        public static void ConfigureSQLConnection(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<Context>(option =>
+            {
+                option.UseSqlServer(configuration.GetConnectionString("IdentityApp"));
+            });
+        }
+        #endregion
+        #region Identity configuration
+        public static void ConfigureIdentity(this IServiceCollection services)
+        {
+            services.AddIdentityCore<User>(option =>
+            {
+                option.Password.RequiredLength = 6;
+                option.Password.RequireDigit = false;
+                option.Password.RequireLowercase = false;
+                option.Password.RequireUppercase = false;
+                option.Password.RequireNonAlphanumeric = false;
+
+                option.SignIn.RequireConfirmedEmail = true;
+            })
+                .AddRoles<IdentityRole>()
+                .AddRoleManager<RoleManager<IdentityRole>>()
+                .AddEntityFrameworkStores<Context>()
+                .AddSignInManager<SignInManager<User>>()
+                .AddUserManager<UserManager<User>>()
+                .AddDefaultTokenProviders();
+
+        }
+
+        #endregion
+
+        #region JWT configuration
+
+        public static void JwtConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(option =>
+                {
+                    option.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"])),
+                        ValidIssuer = configuration["JWT:Issuer"],
+                        ValidateIssuer = true,
+                        ValidateAudience = false
+                    };
+                });
+        }
+
+        #endregion
+    }
+}

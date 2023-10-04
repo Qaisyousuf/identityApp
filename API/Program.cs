@@ -1,3 +1,5 @@
+using API.Extentions;
+using API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,6 +13,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// configuration of extenstions methods
+builder.Services.ConfigureSQLConnection(builder.Configuration);
+builder.Services.ConfigureIdentity();
+builder.Services.AddScoped<JwtService>();
+
+builder.Services.JwtConfiguration(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -21,7 +30,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
