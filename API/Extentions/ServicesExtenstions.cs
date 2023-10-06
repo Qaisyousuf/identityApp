@@ -1,11 +1,14 @@
 ﻿using API.Data;
 using API.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 using System.Text;
 
 namespace API.Extentions
@@ -21,6 +24,7 @@ namespace API.Extentions
             });
         }
         #endregion
+
         #region Identity configuration
         public static void ConfigureIdentity(this IServiceCollection services)
         {
@@ -46,7 +50,6 @@ namespace API.Extentions
         #endregion
 
         #region JWT configuration
-
         public static void JwtConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -62,7 +65,46 @@ namespace API.Extentions
                     };
                 });
         }
+        #endregion
+
+        #region CORSConfiguration
+        public static void CORSConfiguration(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            app.UseCors(option =>
+            {
+                option.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(configuration["JWT:ClientUrl"]);
+            });
+            
+        }
+        #endregion
+
+        #region  InvalideModelStateConfiguration
+
+        public static void ModelStateValidation(this IServiceCollection services)
+        {
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = actionContext =>
+
+                {
+                    var errors = actionContext.ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .SelectMany(x => x.Value.Errors)
+                    .Select(x => x.ErrorMessage).ToArray();
+
+
+                    var toReturn = new
+                    {
+                        errors = errors,
+                    };
+
+                    return new BadRequestObjectResult(toReturn);
+                };
+             
+            });
+        }
 
         #endregion
+
     }
 }

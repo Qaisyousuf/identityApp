@@ -20,7 +20,14 @@ builder.Services.AddScoped<JwtService>();
 
 builder.Services.JwtConfiguration(builder.Configuration);
 
+builder.Services.AddCors();
+
+builder.Services.ModelStateValidation();
+
 var app = builder.Build();
+
+app.CORSConfiguration(builder.Configuration);
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
