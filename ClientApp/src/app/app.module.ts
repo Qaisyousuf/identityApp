@@ -7,9 +7,11 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
 import { AppRoutingModule } from './app-routing.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from './shared/shared.module';
+import { SettingsComponent } from './settings/settings.component';
+import { JwtInterceptor } from './shared/Interceptors/jwt.interceptor';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,7 @@ import { SharedModule } from './shared/shared.module';
     NavbarComponent,
     FooterComponent,
     HomeComponent,
+    SettingsComponent,
 
   ],
   imports: [
@@ -28,7 +31,9 @@ import { SharedModule } from './shared/shared.module';
     SharedModule
 
   ],
-  providers: [],
+  providers: [
+    {provide:HTTP_INTERCEPTORS, useClass:JwtInterceptor, multi:true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
