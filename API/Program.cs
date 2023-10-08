@@ -17,6 +17,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureSQLConnection(builder.Configuration);
 builder.Services.ConfigureIdentity();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.JwtConfiguration(builder.Configuration);
 
