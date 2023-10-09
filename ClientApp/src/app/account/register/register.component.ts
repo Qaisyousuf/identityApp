@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SharedService } from 'src/app/shared/shared.service';
 import { Router } from '@angular/router';
 import { take } from 'rxjs';
-import { User } from 'src/app/shared/models/user';
+import { User } from 'src/app/shared/models/account/user';
 
 @Component({
   selector: 'app-register',
@@ -41,7 +41,7 @@ constructor(private accounSerivces:AccountService,private FormBuilder:FormBuilde
     this.registerFormGroup=this.FormBuilder.group({
       firstname:['', [Validators.required, Validators.minLength(3),Validators.maxLength(15)]],
       lastname:['', [Validators.required, Validators.minLength(3),Validators.maxLength(15)]],
-      email:['', [Validators.required, Validators.pattern('^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$')]],
+      email:['', [Validators.required, Validators.email]],
       password:['', [Validators.required, Validators.minLength(6),Validators.maxLength(15)]],
     })
   }
