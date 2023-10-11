@@ -8,6 +8,8 @@ import { ReplaySubject, map, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { ConfirmEmail } from '../shared/models/account/confirmEmail';
 import { ResetPassword } from '../shared/models/account/resetPassword';
+import { RegisterWithExternal } from '../shared/models/account/registerWithExternal';
+import { LoginWithExternal } from '../shared/models/account/loginWithExternal';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +49,16 @@ Logout()
     return this.http.post(`${environment.appUrl}/api/account/register`,model)
   }
 
+  registerWithThirdParty(mode:RegisterWithExternal){
+    return this.http.post<User>(`${environment.appUrl}/api/account/register-with-third-party`,mode).pipe(
+      map((user:User)=>{
+        if(user){
+          this.setUser(user);
+        }
+      })
+    );
+  }
+
   login(model:Login){
     return this.http.post<User>(`${environment.appUrl}/api/account/login`,model).pipe(
       map((user:User)=>{
@@ -55,6 +67,16 @@ Logout()
         }
       })
     );
+  }
+
+  loginWithThirdParty(model:LoginWithExternal){
+     return this.http.post<User>(`${environment.appUrl}/api/account/login-with-third-party`,model).pipe(
+      map((user:User)=>{
+        if(user){
+          this.setUser(user);
+        }
+      })
+     )
   }
 
   confirmEmail(model:ConfirmEmail){

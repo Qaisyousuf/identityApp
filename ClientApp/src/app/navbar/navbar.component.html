@@ -12,9 +12,12 @@
             <span class="visually-hidden">(current)</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/settings">Settings</a>
-        </li>
+        <ng-container  *ngIf="(accountService.user$ |async) as User">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/settings">Settings</a>
+          </li>
+        </ng-container>
+
 
 
       </ul>
