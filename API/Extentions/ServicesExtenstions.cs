@@ -106,5 +106,18 @@ namespace API.Extentions
 
         #endregion
 
+        #region User Policy
+        public static void PolicyConfiguration(this IServiceCollection services)
+        {
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+                opt.AddPolicy("ManagerPolicy", policy => policy.RequireRole("Manager"));
+                opt.AddPolicy("DeveloperPolicy", policy => policy.RequireRole("Developer"));
+                opt.AddPolicy("VIPDeveloperPolicy", policy => policy.RequireRole("VIPdeveloper"));
+            });
+        }
+        #endregion
+
     }
 }

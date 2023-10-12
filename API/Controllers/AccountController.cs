@@ -55,9 +55,34 @@ namespace API.Controllers
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
 
-            if (!result.Succeeded) return Unauthorized("Invalide usernam  or password");
+            if(result.IsLockedOut)
+            {
+                return Unauthorized(string.Format("Your account has been locked, You should wait until {0} (UTC Time) to be able to login",user.LockoutEnd));
+            }
 
-            return CreateApplicationUserDto(user);
+            if (!result.Succeeded)
+            {
+
+                if(!user.UserName.Equals(SD.AdminUserName))
+                {
+                    await _userManager.AccessFailedAsync(user);
+                }
+
+                if(user.AccessFailedCount>=SD.MaximumLoginAttempts)
+                {
+                    await _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow.AddDays(1));
+
+                    return Unauthorized(string.Format("Your account has been locked, You should wait until {0} (UTC Time) to be able to login", user.LockoutEnd));
+
+                }
+                return Unauthorized("Invalide usernam  or password");
+            }
+
+            await _userManager.ResetAccessFailedCountAsync(user);
+
+            await _userManager.SetLockoutEndDateAsync(user, null);
+
+            return await CreateApplicationUserDto(user);
         }
 
         [HttpPost("login-with-third-party")]
@@ -103,7 +128,7 @@ namespace API.Controllers
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == model.UserId && x.Provider == model.Provider);
             if (user == null) return Unauthorized("Unable to find your user account");
 
-            return CreateApplicationUserDto(user);
+            return await CreateApplicationUserDto(user);
         }
 
 
@@ -129,6 +154,8 @@ namespace API.Controllers
             var result = await _userManager.CreateAsync(userToAdd, model.Password);
 
             if (!result.Succeeded) return BadRequest(result.Errors);
+
+            await _userManager.AddToRoleAsync(userToAdd, SD.DeveloperRole);
 
             try
             {
@@ -214,9 +241,11 @@ namespace API.Controllers
             };
 
             var result = await _userManager.CreateAsync(userToAdd);
+
+            await _userManager.AddToRoleAsync(userToAdd, SD.DeveloperRole);
             if (!result.Succeeded) return BadRequest(result.Errors);
 
-            return CreateApplicationUserDto(userToAdd);
+            return await CreateApplicationUserDto(userToAdd);
 
 
         }
@@ -353,20 +382,20 @@ namespace API.Controllers
         {
             var user = await _userManager.FindByNameAsync(User.FindFirst(ClaimTypes.Email)?.Value);
 
-            return CreateApplicationUserDto(user);
+            return await CreateApplicationUserDto(user);
         }
 
 
 
         #region Private helper methods
 
-        private UserDto CreateApplicationUserDto(User user)
+        private async Task<UserDto> CreateApplicationUserDto(User user)
         {
             return new UserDto
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                JWT = _jwtService.CreateJWT(user),
+                JWT = await _jwtService.CreateJWT(user),
             };
         }
 
