@@ -7,6 +7,8 @@ import { AccountService } from '../account/account.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
+
+  collapsed=true;
 constructor(public accountService:AccountService){}
 
 logout(){
@@ -14,4 +16,10 @@ logout(){
   this.accountService.Logout();
 }
 
+toggleCollapsed(){
+  this.collapsed=!this.collapsed;
 }
+
+}
+
+

@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { NotificationComponent } from './components/models/notification/notification.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { UserHasRoleDirective } from './directives/user-has-role.directive';
 
 
 
@@ -16,6 +17,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     NotFoundComponent,
     ValidationMessagesComponent,
     NotificationComponent,
+    UserHasRoleDirective,
 
   ],
   imports: [
@@ -29,7 +31,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ReactiveFormsModule,
     RouterModule,
     HttpClientModule,
-    ValidationMessagesComponent
+    ValidationMessagesComponent,
+    UserHasRoleDirective
   ]
 })
 export class SharedModule { }

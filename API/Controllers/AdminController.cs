@@ -52,7 +52,7 @@ namespace API.Controllers
 
         }
 
-        [HttpPut("lock-memeber/{id}")]
+        [HttpPut("lock-member/{id}")]
         public async Task<IActionResult> LockMemeber(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -87,7 +87,7 @@ namespace API.Controllers
         }
 
 
-        [HttpGet("get-memeber/{id}")]
+        [HttpGet("get-member/{id}")]
         public async Task<ActionResult<MemberAddEditDto>> GetMemeber(string id)
         {
             var memeber = await _userManager.Users
@@ -105,7 +105,7 @@ namespace API.Controllers
             return Ok(memeber);
         }
 
-        [HttpPost("add-edit-memeber")]
+        [HttpPost("add-edit-member")]
         public async Task<IActionResult> AddEditmemeber(MemberAddEditDto model)
         {
             User user;
@@ -187,9 +187,10 @@ namespace API.Controllers
             }
             else
             {
-                return Ok(new JsonResult(new { title = "Memeber Edited", message = $"{model.UserName} has been u pdated" }));
+                return Ok(new JsonResult(new { title = "Memeber Edited", message = $"{model.UserName} has been updated" }));
             }
         }
+        [HttpDelete("delete-member/{id}")]
         public async Task<IActionResult> DeleteMemeber(string id)
         {
             var user = await _userManager.FindByIdAsync(id);

@@ -15,7 +15,8 @@ const routes:Routes=[
     runGuardsAndResolvers:'always',
     canActivate:[authorizationGuard],
     children:[
-      {path:'settings',component:SettingsComponent}
+      {path:'settings',component:SettingsComponent},
+      {path:'admin',loadChildren:()=>import('./admin/admin.module').then(module=>module.AdminModule)}
     ]
   },
   // {path:'settings',component:SettingsComponent},

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Register } from '../shared/models/account/register';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 import { Login } from '../shared/models/account/login';
 import { User } from '../shared/models/account/user';
 import { ReplaySubject, map, of } from 'rxjs';
@@ -31,7 +31,7 @@ export class AccountService {
     let headers=new HttpHeaders();
     headers=headers.set('Authorization','Bearer ' + jwt);
 
-    return this.http.get<User>(`${environment.appUrl}/api/account/refresh-user-token`, {headers}).pipe(
+    return this.http.get<User>(`${environment.appUrl}account/refresh-user-token`, {headers}).pipe(
       map((user:User)=>{
         this.setUser(user);
       })
@@ -46,11 +46,11 @@ Logout()
 }
   register(model:Register)
   {
-    return this.http.post(`${environment.appUrl}/api/account/register`,model)
+    return this.http.post(`${environment.appUrl}account/register`,model)
   }
 
   registerWithThirdParty(mode:RegisterWithExternal){
-    return this.http.post<User>(`${environment.appUrl}/api/account/register-with-third-party`,mode).pipe(
+    return this.http.post<User>(`${environment.appUrl}account/register-with-third-party`,mode).pipe(
       map((user:User)=>{
         if(user){
           this.setUser(user);
@@ -60,7 +60,7 @@ Logout()
   }
 
   login(model:Login){
-    return this.http.post<User>(`${environment.appUrl}/api/account/login`,model).pipe(
+    return this.http.post<User>(`${environment.appUrl}account/login`,model).pipe(
       map((user:User)=>{
         if(user){
           this.setUser(user);
@@ -70,7 +70,7 @@ Logout()
   }
 
   loginWithThirdParty(model:LoginWithExternal){
-     return this.http.post<User>(`${environment.appUrl}/api/account/login-with-third-party`,model).pipe(
+     return this.http.post<User>(`${environment.appUrl}account/login-with-third-party`,model).pipe(
       map((user:User)=>{
         if(user){
           this.setUser(user);
@@ -80,20 +80,20 @@ Logout()
   }
 
   confirmEmail(model:ConfirmEmail){
-    return this.http.put(`${environment.appUrl}/api/account/confirm-email`,model);
+    return this.http.put(`${environment.appUrl}account/confirm-email`,model);
   }
 
   resendEmailConfirmationLink(email:string){
-    return this.http.post(`${environment.appUrl}/api/account/resend-email-confirmation-link/${email}`,{});
+    return this.http.post(`${environment.appUrl}account/resend-email-confirmation-link/${email}`,{});
   }
 
   forgotUsernameorPassword(email:string)
   {
-    return this.http.post(`${environment.appUrl}/api/account/forgot-username-or-password/${email}`,{});
+    return this.http.post(`${environment.appUrl}account/forgot-username-or-password/${email}`,{});
   }
 
   resetPassword(mode:ResetPassword){
-    return this.http.put(`${environment.appUrl}/api/account/reset-password`,mode);
+    return this.http.put(`${environment.appUrl}account/reset-password`,mode);
   }
 
   getJWT(){

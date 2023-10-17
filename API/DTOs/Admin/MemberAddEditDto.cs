@@ -13,6 +13,7 @@ namespace API.DTOs.Admin
         public string LastName { get; set; }
         [Required]
         public string Roles { get; set; }
+      
         public string Password { get; set; }
 
     }
