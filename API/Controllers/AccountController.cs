@@ -45,7 +45,7 @@ namespace API.Controllers
         }
 
 
-        //[HttpPost("login")]
+        [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto model)
         {
             var user = await _userManager.FindByNameAsync(model.UserName);
